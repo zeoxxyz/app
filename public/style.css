@@ -1,5 +1,3 @@
-/* Clyde-Obfuscator Web UI - Clean Early 2010s Dark Baby Blue Theme */
-
 :root {
   --bg-body: #1c1c1e;
   --bg-panel: #262629;
@@ -13,7 +11,7 @@
   --baby-blue-glow: rgba(137, 207, 240, 0.4);
 }
 
-/* Reset & Basic Setup */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -28,7 +26,7 @@ body {
   padding: 20px;
 }
 
-/* Page Layout Container */
+
 .web-container {
   max-width: 1440px;
   margin: 0 auto;
@@ -37,7 +35,7 @@ body {
   gap: 16px;
 }
 
-/* Branding Header */
+
 .web-header {
   display: flex;
   justify-content: space-between;
@@ -63,7 +61,7 @@ body {
   gap: 8px;
 }
 
-/* Badges */
+
 .web-badge {
   padding: 4px 8px;
   font-size: 10px;
@@ -85,7 +83,7 @@ body {
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
-/* Metrics Dashboard Grid */
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -119,7 +117,7 @@ body {
   text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 4px var(--baby-blue-glow);
 }
 
-/* Workspace Grid (3-column layout) */
+
 .workspace-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr 1.15fr;
@@ -127,7 +125,7 @@ body {
   min-height: 520px;
 }
 
-/* Panel Frame (Win32/Aero web style) */
+
 .web-panel {
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
@@ -191,7 +189,7 @@ textarea[readonly] {
   text-shadow: 0 0 2px var(--baby-blue-glow);
 }
 
-/* Panel scroll and Options styling */
+
 .controls-panel {
   display: flex;
   flex-direction: column;
@@ -206,7 +204,7 @@ textarea[readonly] {
   max-height: 380px;
 }
 
-/* Scrollbar customization */
+
 .panel-scroll-container::-webkit-scrollbar,
 .console-body::-webkit-scrollbar {
   width: 16px;
@@ -245,7 +243,7 @@ textarea[readonly] {
   padding: 0 6px;
 }
 
-/* Checkboxes Group */
+
 .checkbox-wrapper {
   display: flex;
   align-items: flex-start;
@@ -278,7 +276,7 @@ textarea[readonly] {
   line-height: 1.3;
 }
 
-/* Selector dropdowns */
+
 .select-group {
   display: flex;
   flex-direction: column;
@@ -314,14 +312,14 @@ select:focus {
   border-color: var(--baby-blue);
 }
 
-/* Button Footers */
+
 .button-footer {
   padding: 10px;
   border-top: 1px solid var(--border-dark);
   background: #1e1e21;
 }
 
-/* High-Contrast Glassy Buttons */
+
 .glassy-button-blue {
   background: linear-gradient(to bottom, #bce8f9 0%, #7fcbf4 50%, #56bae8 50%, #30a2db 100%);
   border: 1px solid #1c72b8;
@@ -387,7 +385,7 @@ select:focus {
   box-shadow: none;
 }
 
-/* Spinner Loader */
+
 .btn-loader {
   border: 2px solid rgba(14, 62, 92, 0.25);
   border-radius: 50%;
@@ -405,7 +403,7 @@ select:focus {
   display: none !important;
 }
 
-/* Web Diagnostics Terminal Console */
+
 .web-console {
   background: var(--bg-panel);
   border: 1px solid var(--border-panel);
@@ -488,7 +486,7 @@ select:focus {
   padding-left: 6px;
 }
 
-/* Responsiveness */
+
 @media (max-width: 1280px) {
   .workspace-grid {
     grid-template-columns: 1fr;

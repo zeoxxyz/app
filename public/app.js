@@ -1,7 +1,4 @@
-// Clyde-Obfuscator Client Application - Refined Baby Blue Version
-
 document.addEventListener("DOMContentLoaded", () => {
-  // Elements
   const inputEditor = document.getElementById("input-editor");
   const outputEditor = document.getElementById("output-editor");
   
@@ -27,20 +24,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let debounceTimer;
 
-  // Initial console line and startup validation
   logConsole("API endpoints connected. Loading script analyzer...", "system");
   performLiveValidation();
 
-  // Debounced Live Linter (Validate on type)
   inputEditor.addEventListener("input", () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(performLiveValidation, 600);
   });
 
-  // Obfuscate Action
   btnObfuscate.addEventListener("click", performObfuscation);
 
-  // Copy Action
   btnCopy.addEventListener("click", () => {
     if (outputEditor.value.trim() === "") return;
     
@@ -59,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Helper: Append line to retro terminal console
   function logConsole(message, type = "system") {
     const line = document.createElement("div");
     line.className = `console-line line-${type}`;
@@ -68,11 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
     line.innerText = `[${timestamp}] ${message}`;
     
     consoleLog.appendChild(line);
-    // Auto-scroll to bottom
     consoleLog.scrollTop = consoleLog.scrollHeight;
   }
 
-  // Helper: Animating number counts for metrics
   function animateNumber(element, start, end, duration) {
     if (start === end) {
       element.innerText = end;
@@ -91,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, stepTime || 1);
   }
 
-  // Validate Code Live
   async function performLiveValidation() {
     const code = inputEditor.value;
     if (code.trim() === "") {
@@ -113,12 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const result = await response.json();
       
-      // Update Stats safely
       if (result && result.stats) {
         updateStatCounts(result.stats);
       }
 
-      // Clear previous validation warnings/errors
       clearTerminalLogs();
 
       if (result && result.errors && result.errors.length > 0) {
@@ -132,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
           logConsole("[LINTER] Warnings or unusual globals detected:", "warning");
         }
 
-        // Print errors to console
         result.errors.forEach(err => {
           const locStr = err.line ? `[L:${err.line} C:${err.column}]` : "[GLOBAL]";
           const type = err.severity === "error" ? "error" : "warning";
@@ -149,7 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Obfuscate Code
   async function performObfuscation() {
     const code = inputEditor.value;
     if (code.trim() === "") {
@@ -157,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // UI Feedback: Loading
     const btnText = btnObfuscate.querySelector(".btn-text");
     const loader = btnObfuscate.querySelector(".btn-loader");
     
@@ -194,7 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(result.error || "Obfuscation failed");
       }
 
-      // Display output
       outputEditor.value = result.output;
       btnCopy.disabled = false;
 
@@ -210,14 +193,12 @@ document.addEventListener("DOMContentLoaded", () => {
       btnCopy.disabled = true;
       updateStatus("red", "Failed");
     } finally {
-      // Revert UI Loading
       btnText.innerText = originalBtnText;
       loader.classList.add("hidden");
       btnObfuscate.disabled = false;
     }
   }
 
-  // Helpers to update UI elements
   function resetStats() {
     statTokens.innerText = "0";
     statStatements.innerText = "0";
@@ -247,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function clearTerminalLogs() {
-    // Keep only the first system log or clear all but non-error system logs
     const lines = consoleLog.querySelectorAll(".console-line");
     lines.forEach(line => {
       if (line.classList.contains("line-error") || line.classList.contains("line-warning") || line.classList.contains("line-success")) {
