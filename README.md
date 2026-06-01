@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛡️Clyde
+# Clyde-Luau-Obfuscator
 
 **Advanced Luau Obfuscator with VM-Based Protection**
 
@@ -9,7 +9,7 @@ A high-performance Luau obfuscation toolkit featuring full language support, mul
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](./LICENSE)
-[![Stars](https://img.shields.io/github/stars/sfr-development/Clyde?style=flat-square)](https://github.com/sfr-development/Clyde/stargazers)
+[![Stars](https://img.shields.io/github/stars/sfr-development/Clyde-Luau-Obfuscator?style=flat-square)](https://github.com/sfr-development/Clyde-Luau-Obfuscator/stargazers)
 
 </div>
 
@@ -126,9 +126,8 @@ graph TD
 
 ```mermaid
 graph TD
-    ROOT["clyde/"] --> SRC["src/"]
+    ROOT["Clyde-Luau-Obfuscator/"] --> SRC["src/"]
     ROOT --> PUB["public/"]
-    ROOT --> BIN["bin/"]
     
     SRC --> LEX["lexer/<br/><i>Tokenizer + token types</i>"]
     SRC --> PAR["parser/<br/><i>Recursive descent parser + type parser</i>"]
@@ -146,7 +145,6 @@ graph TD
     style ROOT fill:#1a1a2e,stroke:#4fc3f7,color:#e0e0e0
     style SRC fill:#1a1a2e,stroke:#4fc3f7,color:#e0e0e0
     style PUB fill:#1a1a2e,stroke:#4fc3f7,color:#e0e0e0
-    style BIN fill:#1a1a2e,stroke:#4fc3f7,color:#e0e0e0
     style LEX fill:#0d2137,stroke:#81d4fa,color:#e0e0e0
     style PAR fill:#0d2137,stroke:#81d4fa,color:#e0e0e0
     style AST2 fill:#0d2137,stroke:#81d4fa,color:#e0e0e0
@@ -172,8 +170,8 @@ graph TD
 ### Installation
 
 ```bash
-git clone https://github.com/sfr-development/Clyde.git
-cd Clyde
+git clone https://github.com/sfr-development/Clyde-Luau-Obfuscator.git
+cd Clyde-Luau-Obfuscator
 npm install
 npm run build
 ```
@@ -321,11 +319,11 @@ Both VMs support three protection levels:
 
 ## Star History
 
-<a href="https://star-history.com/#sfr-development/Clyde&Date">
+<a href="https://star-history.com/#sfr-development/Clyde-Luau-Obfuscator&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sfr-development/Clyde&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sfr-development/Clyde&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sfr-development/Clyde&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sfr-development/Clyde-Luau-Obfuscator&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sfr-development/Clyde-Luau-Obfuscator&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sfr-development/Clyde-Luau-Obfuscator&type=Date" />
  </picture>
 </a>
 
