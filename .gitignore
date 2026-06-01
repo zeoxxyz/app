@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 
+# Luau binaries
+bin/
+
 # IDE / Editor
 .vscode/
 .idea/
