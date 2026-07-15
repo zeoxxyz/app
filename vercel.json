@@ -1,8 +1,0 @@
-{
-  "outputDirectory": "public",
-  "buildCommand": "npm run build",
-  "rewrites": [
-    { "source": "/raw/:fileId", "destination": "/raw.html" },
-    { "source": "/raw/:fileId/", "destination": "/raw.html" }
-  ]
-}
