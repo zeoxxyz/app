@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in — ZEOX</title>
+  <meta name="description" content="Sign in or create a ZEOX account to access the Luau obfuscation dashboard.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/site.css?v=2">
+</head>
+<body class="site">
+  <nav class="site-nav">
+    <a class="site-nav-brand" href="/home/"><span class="site-nav-brand-mark">Z</span>ZEOX</a>
+    <div class="site-nav-links">
+      <a href="/home/">Home</a>
+      <a href="/about/">About</a>
+    </div>
+  </nav>
+
+  <div class="auth-wrap">
+    <!-- LEFT: pitch -->
+    <div class="auth-hero glass">
+      <span class="hero-eyebrow"><span class="dot"></span> Free account</span>
+      <h1>Ship protected <span class="grad">Luau scripts</span> in seconds.</h1>
+      <p>One account unlocks the full ZEOX dashboard — obfuscator, file manager, daily quota, and everything in between.</p>
+      <ul class="auth-perks">
+        <li>
+          <div class="perk-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="perk-title">500 KB free daily quota</div>
+            <div class="perk-desc">Plus a +100 KB gift every day — no credit card required.</div>
+          </div>
+        </li>
+        <li>
+          <div class="perk-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="perk-title">Full VM obfuscation</div>
+            <div class="perk-desc">Register-based VM, XOR encryption and control-flow scrambling.</div>
+          </div>
+        </li>
+        <li>
+          <div class="perk-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="perk-title">Sub-second builds</div>
+            <div class="perk-desc">Paste, click, ship — no queues and no CLI setup.</div>
+          </div>
+        </li>
+        <li>
+          <div class="perk-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="perk-title">Roblox globals safe</div>
+            <div class="perk-desc">Engine APIs are never renamed — your script keeps working.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- RIGHT: form -->
+    <div class="auth-card glass">
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" data-mode="signin" type="button">Sign in</button>
+        <button class="auth-tab" data-mode="signup" type="button">Create account</button>
+      </div>
+
+      <h1 class="auth-title" id="auth-title">Welcome back</h1>
+      <p class="auth-sub" id="auth-sub">Sign in to access your ZEOX dashboard.</p>
+
+      <div class="auth-error" id="auth-error"></div>
+
+      <form class="auth-form" id="auth-form" novalidate>
+        <div class="auth-field" id="field-name" style="display:none;">
+          <label for="name">Display name</label>
+          <input id="name" type="text" autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="auth-field">
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="email" required placeholder="you@example.com">
+        </div>
+        <div class="auth-field">
+          <label for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="At least 6 characters">
+        </div>
+        <div class="auth-forgot" id="forgot-wrap">
+          <a href="#" id="forgot-link">Forgot password?</a>
+        </div>
+        <button class="auth-submit" id="submit-btn" type="submit">Sign in</button>
+      </form>
+
+      <div class="auth-divider">Secured by Firebase</div>
+
+      <p class="auth-alt" id="auth-alt">
+        New to ZEOX? <a href="#" data-switch="signup">Create an account</a>
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      auth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      updateProfile,
+      sendPasswordResetEmail,
+    } from "/firebase.js";
+
+    const params = new URLSearchParams(location.search);
+    const next = params.get("next") || "/dashboard/";
+
+    onAuthStateChanged(auth, (user) => { if (user) location.replace(next); });
+
+    const form = document.getElementById("auth-form");
+    const errorBox = document.getElementById("auth-error");
+    const submitBtn = document.getElementById("submit-btn");
+    const nameField = document.getElementById("field-name");
+    const title = document.getElementById("auth-title");
+    const sub = document.getElementById("auth-sub");
+    const altText = document.getElementById("auth-alt");
+    const tabs = document.querySelectorAll(".auth-tab");
+    let mode = "signin";
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      tabs.forEach((t) => t.classList.toggle("active", t.dataset.mode === mode));
+      const isSignup = mode === "signup";
+      nameField.style.display = isSignup ? "" : "none";
+      title.textContent = isSignup ? "Create your account" : "Welcome back";
+      sub.textContent = isSignup ? "Start protecting Luau scripts in seconds." : "Sign in to access your ZEOX dashboard.";
+      submitBtn.textContent = isSignup ? "Create account" : "Sign in";
+      altText.innerHTML = isSignup
+        ? 'Already have an account? <a href="#" data-switch="signin">Sign in</a>'
+        : 'New to ZEOX? <a href="#" data-switch="signup">Create an account</a>';
+      document.getElementById("password").autocomplete = isSignup ? "new-password" : "current-password";
+      document.getElementById("forgot-wrap").style.display = isSignup ? "none" : "";
+      errorBox.classList.remove("show");
+    }
+
+    tabs.forEach((t) => t.addEventListener("click", () => setMode(t.dataset.mode)));
+    document.addEventListener("click", (e) => {
+      const s = e.target.closest("[data-switch]");
+      if (s) { e.preventDefault(); setMode(s.dataset.switch); }
+    });
+
+    function showError(msg, kind = "error") {
+      errorBox.textContent = msg;
+      if (kind === "success") {
+        errorBox.style.color = "var(--sky-deep)";
+        errorBox.style.background = "var(--sky-soft)";
+        errorBox.style.borderColor = "var(--sky-mid)";
+      } else {
+        errorBox.style.color = "";
+        errorBox.style.background = "";
+        errorBox.style.borderColor = "";
+      }
+      errorBox.classList.add("show");
+    }
+
+    function friendly(err) {
+      const code = err?.code || "";
+      const map = {
+        "auth/invalid-email": "That email address looks invalid.",
+        "auth/user-not-found": "No account matches that email.",
+        "auth/wrong-password": "Incorrect email or password.",
+        "auth/invalid-credential": "Incorrect email or password.",
+        "auth/email-already-in-use": "An account with that email already exists.",
+        "auth/weak-password": "Password must be at least 6 characters.",
+        "auth/too-many-requests": "Too many attempts. Please try again later.",
+        "auth/network-request-failed": "Network error. Check your connection.",
+      };
+      return map[code] || err?.message || "Something went wrong. Please try again.";
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorBox.classList.remove("show");
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const name = document.getElementById("name").value.trim();
+      if (!email || !password) return showError("Please fill in all fields.");
+      submitBtn.disabled = true;
+      submitBtn.textContent = mode === "signup" ? "Creating..." : "Signing in...";
+      try {
+        if (mode === "signup") {
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          if (name) await updateProfile(cred.user, { displayName: name });
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+        }
+        location.replace(next);
+      } catch (err) {
+        showError(friendly(err));
+        submitBtn.disabled = false;
+        submitBtn.textContent = mode === "signup" ? "Create account" : "Sign in";
+      }
+    });
+
+    document.getElementById("forgot-link").addEventListener("click", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      if (!email) return showError("Enter your email above first, then click 'Forgot password?'.");
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showError("Reset email sent. Check your inbox.", "success");
+      } catch (err) {
+        showError(friendly(err));
+      }
+    });
+  </script>
+</body>
+</html>
