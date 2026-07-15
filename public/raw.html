@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raw File · ZEOX</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/site.css" />
+  <style>
+    :root {
+      --sky: #0ea5e9;
+      --sky-deep: #0369a1;
+      --sky-bright: #38bdf8;
+      --sky-glow: rgba(14,165,233,0.35);
+      --bg: #f0f4fa;
+      --bg-card: #fff;
+      --bg-hover: #f5f8ff;
+      --bg-sidebar: #f8fafd;
+      --bg-raised: #edf2fb;
+      --text-main: #111827;
+      --text-muted: #6b7a99;
+      --border: #e2e8f4;
+      --border-strong: #c7d4ea;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* NAV */
+    .site-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 32px; background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(18px) saturate(160%);
+      border-bottom: 1px solid rgba(226,232,242,0.7); position: sticky; top: 0; z-index: 100;
+    }
+    .site-nav-brand { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px; color: var(--text-main); text-decoration: none; }
+    .site-nav-brand-mark { width:34px; height:34px; border-radius:10px; background: linear-gradient(135deg, var(--sky-bright) 0%, var(--sky-deep) 100%); color:#fff; display:grid; place-items:center; font-weight:800; box-shadow: 0 6px 18px -4px var(--sky-glow); }
+    .nav-btn { padding: 8px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; text-decoration: none; background: linear-gradient(135deg, var(--sky) 0%, var(--sky-deep) 100%); color: #fff; box-shadow: 0 6px 18px -4px var(--sky-glow); transition: .2s; border: none; cursor: pointer; }
+    .nav-btn:hover { transform: translateY(-1px); }
+
+    /* MAIN */
+    .raw-wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; flex: 1; width: 100%; }
+
+    /* FILE INFO CARD */
+    .file-info-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px 28px; margin-bottom: 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 12px rgba(14,165,233,0.06);
+    }
+    .file-meta { display: flex; flex-direction: column; gap: 6px; }
+    .file-name { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: var(--text-main); word-break: break-all; }
+    .file-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    }
+    .badge-blue { background: rgba(14,165,233,0.12); color: var(--sky-deep); }
+    .badge-green { background: rgba(22,163,74,0.12); color: #166534; }
+    .badge-gray { background: rgba(107,122,153,0.12); color: var(--text-muted); }
+    .file-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+    .btn-action {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--bg-hover); color: var(--text-main);
+      cursor: pointer; transition: .18s; text-decoration: none;
+    }
+    .btn-action:hover { background: var(--bg-raised); border-color: var(--border-strong); }
+    .btn-action.primary { background: linear-gradient(135deg, var(--sky) 0%, var(--sky-deep) 100%); color: #fff; border: none; box-shadow: 0 4px 14px -4px var(--sky-glow); }
+    .btn-action.primary:hover { transform: translateY(-1px); }
+
+    /* CONTENT PANEL */
+    .content-panel {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      overflow: hidden; box-shadow: 0 2px 12px rgba(14,165,233,0.06);
+    }
+    .content-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+    }
+    .content-header-label { font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .content-header-label span { color: var(--text-main); }
+    .copy-btn {
+      padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--bg-hover); color: var(--text-main);
+      cursor: pointer; transition: .15s;
+    }
+    .copy-btn:hover { background: var(--bg-raised); }
+    .copy-btn.copied { background: rgba(22,163,74,0.12); color: #166534; border-color: rgba(22,163,74,0.3); }
+
+    .content-body {
+      position: relative;
+    }
+    .line-numbers {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 52px; padding: 20px 0;
+      background: var(--bg-sidebar); border-right: 1px solid var(--border);
+      color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; line-height: 22px; text-align: right;
+      padding-right: 12px; user-select: none;
+      overflow: hidden; pointer-events: none;
+    }
+    .file-content {
+      display: block; width: 100%; min-height: 400px;
+      padding: 20px 20px 20px 72px;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 22px;
+      color: var(--text-main); background: transparent; border: none; outline: none;
+      resize: none; overflow: auto; white-space: pre; tab-size: 2;
+    }
+
+    /* STATES */
+    .state-wrap { padding: 80px 32px; text-align: center; }
+    .state-icon { font-size: 40px; margin-bottom: 16px; }
+    .state-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .state-sub { color: var(--text-muted); font-size: 15px; }
+    .spinner {
+      width: 36px; height: 36px; border: 3px solid var(--border);
+      border-top-color: var(--sky); border-radius: 50%;
+      animation: spin .8s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    .raw-footer {
+      text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;
+      border-top: 1px solid var(--border); background: var(--bg-card);
+    }
+    .raw-footer a { color: var(--sky-deep); text-decoration: none; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="site-nav">
+    <a href="/" class="site-nav-brand">
+      <div class="site-nav-brand-mark">Z</div>
+      ZEOX
+    </a>
+    <a href="/dashboard.html" class="nav-btn">Open Dashboard</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="raw-wrap">
+
+    <!-- Loading state -->
+    <div id="state-loading" class="state-wrap">
+      <div class="spinner"></div>
+      <div class="state-title">Loading file…</div>
+      <div class="state-sub">Fetching from secure storage</div>
+    </div>
+
+    <!-- Error state -->
+    <div id="state-error" class="state-wrap" style="display:none;">
+      <div class="state-icon">⚠️</div>
+      <div class="state-title">File not found</div>
+      <div class="state-sub" id="error-msg">This file may have been deleted or the link is invalid.</div>
+    </div>
+
+    <!-- Content -->
+    <div id="state-content" style="display:none;">
+      <div class="file-info-card">
+        <div class="file-meta">
+          <div class="file-name" id="file-name">—</div>
+          <div class="file-badges">
+            <span class="badge badge-blue" id="badge-size">—</span>
+            <span class="badge badge-gray" id="badge-date">—</span>
+            <span class="badge badge-green" id="badge-type" style="display:none;">Encrypted</span>
+          </div>
+        </div>
+        <div class="file-actions">
+          <button class="btn-action" id="btn-copy-link">🔗 Copy Link</button>
+          <button class="btn-action primary" id="btn-download">⬇ Download</button>
+        </div>
+      </div>
+
+      <div class="content-panel">
+        <div class="content-header">
+          <div class="content-header-label">
+            Raw content · <span id="line-count">—</span> lines
+          </div>
+          <button class="copy-btn" id="btn-copy-content">Copy</button>
+        </div>
+        <div class="content-body">
+          <div class="line-numbers" id="line-numbers" aria-hidden="true"></div>
+          <textarea class="file-content" id="file-content" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="raw-footer">
+    Protected by <a href="/">ZEOX Obfuscator</a> · Files expire after 30 days
+  </footer>
+
+  <!-- Firebase SDK + ZEOX crypto -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+    import { decryptFromBase64 } from "./crypto.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCg41nrI9GosXvb_5vuOixSDpbzeYuct20",
+      authDomain: "zeoxxyz.firebaseapp.com",
+      projectId: "zeoxxyz",
+      storageBucket: "zeoxxyz.firebasestorage.app",
+      messagingSenderId: "896346061745",
+      appId: "1:896346061745:web:d1fde2af1ee3eef26ddb90",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ── Get file ID from URL path: /raw/<id>  OR  /raw.html?id=<id>
+    function getFileId() {
+      const params = new URLSearchParams(location.search);
+      if (params.get("id")) return params.get("id");
+      // Path-based: /raw/XXXXX  → last non-empty segment
+      const segments = location.pathname.split("/").filter(Boolean);
+      const rawIdx = segments.indexOf("raw");
+      if (rawIdx !== -1 && segments[rawIdx + 1]) return segments[rawIdx + 1];
+      return null;
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    }
+
+    function formatDate(ts) {
+      if (!ts) return "Unknown date";
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function renderLineNumbers(text) {
+      const lines = (text.match(/\n/g) || []).length + 1;
+      const nums = [];
+      for (let i = 1; i <= lines; i++) nums.push(i);
+      document.getElementById("line-numbers").textContent = nums.join("\n");
+      document.getElementById("line-count").textContent = lines.toLocaleString();
+    }
+
+    function showError(msg) {
+      document.getElementById("state-loading").style.display = "none";
+      document.getElementById("state-error").style.display = "";
+      if (msg) document.getElementById("error-msg").textContent = msg;
+    }
+
+    async function showContent(data) {
+      document.getElementById("state-loading").style.display = "none";
+      document.getElementById("state-content").style.display = "";
+
+      // Decrypt AES-256-GCM content (encrypted by public/crypto.js — no API needed)
+      let content = "";
+      try {
+        const plainBytes = await decryptFromBase64(data.content || "");
+        content = new TextDecoder().decode(plainBytes);
+      } catch (_) {
+        // Fallback: content may be plain text (e.g. old records)
+        content = data.content || "";
+      }
+
+      const name = data.name || "untitled";
+      const size = data.size || new Blob([content]).size;
+
+      document.getElementById("file-name").textContent = name;
+      document.getElementById("badge-size").textContent = formatSize(size);
+      // dashboard.html saves `createdAt` (not uploadedAt)
+      document.getElementById("badge-date").textContent = "Uploaded " + formatDate(data.createdAt ?? data.uploadedAt);
+      // Always show "Encrypted" badge — all new files use AES-256-GCM
+      const encBadge = document.getElementById("badge-type");
+      if (encBadge) encBadge.style.display = "";
+
+      const ta = document.getElementById("file-content");
+      ta.value = content;
+      renderLineNumbers(content);
+
+      // Sync line numbers scroll
+      ta.addEventListener("scroll", () => {
+        document.getElementById("line-numbers").style.paddingTop =
+          (20 - ta.scrollTop) + "px";
+      });
+
+      // Download
+      document.getElementById("btn-download").addEventListener("click", () => {
+        const blob = new Blob([content], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      // Copy content
+      const copyContentBtn = document.getElementById("btn-copy-content");
+      copyContentBtn.addEventListener("click", () => {
+        navigator.clipboard.writeText(content).then(() => {
+          copyContentBtn.textContent = "Copied!"; copyContentBtn.classList.add("copied");
+          setTimeout(() => { copyContentBtn.textContent = "Copy"; copyContentBtn.classList.remove("copied"); }, 2000);
+        });
+      });
+
+      // Copy link
+      document.getElementById("btn-copy-link").addEventListener("click", () => {
+        navigator.clipboard.writeText(location.href);
+        const b = document.getElementById("btn-copy-link");
+        b.textContent = "✓ Copied!";
+        setTimeout(() => b.textContent = "🔗 Copy Link", 2000);
+      });
+    }
+
+    // ── Main load
+    async function loadFile() {
+      const id = getFileId();
+      if (!id) { showError("No file ID found in the URL."); return; }
+
+      try {
+        const docRef = doc(db, "publishedFiles", id);
+        const snap   = await getDoc(docRef);
+
+        if (!snap.exists()) {
+          showError("File not found. It may have been deleted or the link is invalid.");
+          return;
+        }
+
+        showContent(snap.data());
+      } catch (err) {
+        console.error("Error loading file:", err);
+        showError("Failed to load file: " + err.message);
+      }
+    }
+
+    loadFile();
+  </script>
+
+</body>
+</html>
