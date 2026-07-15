@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZEOX — Luau Obfuscation Engine</title>
+  <meta name="description" content="Deep virtualization, register-based VM, and premium obfuscation for Roblox and Luau scripts.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=4.0.0">
+  <script src="app.js?v=3.0.0" defer></script>
+  <script type="module" src="auth-guard.js"></script>
+</head>
+<body>
+
+  <div class="shell" id="app-root">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-mark">
+          <img src="https://cdn.discordapp.com/attachments/1525599563304534229/1526528384706941019/27_20260714125642.png?ex=6a5759d8&is=6a560858&hm=37fd53f14e4398e484ce9e71016a5f9e62105794eca296c8d802d74284afcfba&" alt="ZEOX logo" class="brand-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <span class="brand-logo-fallback">Z</span>
+        </div>
+        <div>
+          <div class="sidebar-brand-title">ZEOX</div>
+          <div class="sidebar-brand-sub">Obfuscation Engine</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Main</span>
+
+        <button class="nav-item active" data-tab="home">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Home
+        </button>
+
+        <button class="nav-item" data-tab="obfuscator">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Obfuscator
+          <span class="nav-badge">Free</span>
+        </button>
+
+        <button class="nav-item nav-locked" data-tab="apikey">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="15" r="4"/><path d="M12 15h8m-4-4v8"/></svg>
+          API Key
+          <span class="nav-badge nav-badge-lock">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Pro
+          </span>
+        </button>
+
+        <button class="nav-item" data-tab="files">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Files
+        </button>
+
+        <span class="nav-section-label" style="margin-top:8px;">Resources</span>
+
+        <button class="nav-item" data-tab="docs">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Docs
+        </button>
+      </nav>
+
+      <!-- Daily quota widget -->
+      <div class="quota-card">
+        <div class="quota-header">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Daily File Quota
+        </div>
+        <div class="quota-label">
+          <span>Used: <b>0 KB</b></span>
+          <span>/ 500 KB</span>
+        </div>
+        <div class="quota-bar"><div class="quota-fill" id="quota-fill" style="width:0%"></div></div>
+        <div class="quota-gift">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+          +100 KB daily gift
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-row">
+          <div class="user-avatar">U</div>
+          <div class="user-info">
+            <div class="user-name">User</div>
+            <div class="user-plan">Free Plan</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <div class="main-content">
+
+      <!-- ── TOP BAR ── -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="topbar-title" id="topbar-title">Home</span>
+          <span class="topbar-breadcrumb">/ Dashboard</span>
+        </div>
+        <div class="topbar-right">
+          <div class="stat-chips">
+            <div class="stat-chip">
+              <span class="stat-chip-label">Tokens</span>
+              <span class="stat-chip-val sky" id="stat-tokens">0</span>
+            </div>
+            <div class="chip-div"></div>
+            <div class="stat-chip">
+              <span class="stat-chip-label">Stmts</span>
+              <span class="stat-chip-val purple" id="stat-statements">0</span>
+            </div>
+            <div class="chip-div"></div>
+            <div class="stat-chip">
+              <span class="stat-chip-label">Funcs</span>
+              <span class="stat-chip-val orange" id="stat-functions">0</span>
+            </div>
+            <div class="chip-div"></div>
+            <div class="stat-chip">
+              <span class="stat-chip-label">Locals</span>
+              <span class="stat-chip-val pink" id="stat-locals">0</span>
+            </div>
+          </div>
+          <span class="web-badge">Luau v0.723</span>
+          <span class="web-badge web-badge-sky">Register VM</span>
+        </div>
+      </header>
+
+      <!-- ═══════════════ TAB: HOME ═══════════════ -->
+      <section class="tab-content active" id="tab-home">
+
+        <div class="home-stats-grid">
+          <div class="home-stat-card sky">
+            <div class="hsc-icon sky-bg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="hsc-body">
+              <div class="hsc-val" id="home-obf-count">0</div>
+              <div class="hsc-label">Scripts Obfuscated</div>
+            </div>
+          </div>
+          <div class="home-stat-card purple">
+            <div class="hsc-icon purple-bg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="hsc-body">
+              <div class="hsc-val" id="home-files-count">0</div>
+              <div class="hsc-label">Files Encrypted</div>
+            </div>
+          </div>
+          <div class="home-stat-card orange">
+            <div class="hsc-icon orange-bg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="hsc-body">
+              <div class="hsc-val">500 KB</div>
+              <div class="hsc-label">Daily File Limit</div>
+            </div>
+          </div>
+          <div class="home-stat-card pink">
+            <div class="hsc-icon pink-bg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/></svg>
+            </div>
+            <div class="hsc-body">
+              <div class="hsc-val">100 KB</div>
+              <div class="hsc-label">Daily Gift</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-row">
+          <!-- Quick obfuscate CTA -->
+          <div class="home-card home-card-cta">
+            <div class="cta-glow"></div>
+            <div class="cta-body">
+              <div class="cta-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Ready to protect
+              </div>
+              <h2 class="cta-title">Obfuscate your Luau script</h2>
+              <p class="cta-desc">Register-based VM, XOR encryption, control-flow scrambling and more.</p>
+              <button class="btn-cta" data-tab-trigger="obfuscator">
+                Open Obfuscator
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feature grid -->
+          <div class="home-features-grid">
+            <div class="feat-card">
+              <div class="feat-icon sky-bg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 8.5 9 9 5-.5 9-4 9-9V7l-9-5Z"/></svg>
+              </div>
+              <div class="feat-title">Rename Variables</div>
+              <div class="feat-desc">Scramble all identifiers</div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon purple-bg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+              </div>
+              <div class="feat-title">Register VM</div>
+              <div class="feat-desc">Polymorphic engine</div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon orange-bg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-3-3v6"/><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+              <div class="feat-title">XOR Strings</div>
+              <div class="feat-desc">Encrypt all literals</div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon pink-bg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v4H4zm0 8h16v4H4zm0 8h16"/></svg>
+              </div>
+              <div class="feat-title">Control Flow</div>
+              <div class="feat-desc">Opaque predicates</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity log placeholder -->
+        <div class="home-card" style="margin-top:0">
+          <div class="home-card-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Recent Activity
+          </div>
+          <div class="empty-state">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 17H5a2 2 0 0 0-2 2"/><path d="M9 3H5a2 2 0 0 0-2 2v4"/><rect x="9" y="3" width="13" height="18" rx="2"/></svg>
+            <p>No activity yet. Obfuscate a script to get started.</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ═══════════════ TAB: OBFUSCATOR ═══════════════ -->
+      <section class="tab-content" id="tab-obfuscator">
+        <div class="workspace-grid">
+
+          <!-- Input -->
+          <div class="web-panel">
+            <div class="panel-header">
+              <div class="window-dots"><span></span><span></span><span></span></div>
+              <span class="panel-title">Input · Original Source</span>
+              <label class="icon-btn" title="Upload .lua file">
+                <input type="file" id="file-input" accept=".lua,.luau,.txt" hidden>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0-12 4 4m-4-4-4 4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                <span>Upload</span>
+              </label>
+            </div>
+            <div class="panel-body">
+              <div class="code-editor">
+                <div class="line-numbers" id="input-lines"><span>1</span></div>
+                <textarea id="input-editor" class="code-textarea" spellcheck="false" placeholder="-- Paste your raw Luau source code here...">-- ZEOX Luau Obfuscator
+-- Click "Obfuscate Script" to compile and protect this example.
+
+local message = "Hello, world!"
+print(message)
+
+local function square(n)
+    return n * n
+end
+
+print("Square of 5 is: " .. tostring(square(5)))</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="web-panel controls-panel">
+            <div class="panel-header">
+              <div class="window-dots"><span></span><span></span><span></span></div>
+              <span class="panel-title">Config · Engine Options</span>
+            </div>
+
+            <div class="panel-scroll-container">
+              <fieldset class="web-fieldset">
+                <legend class="web-legend">Protection</legend>
+
+                <label class="toggle-wrapper">
+                  <span class="option-text">
+                    <span class="option-title">Rename Variables</span>
+                    <span class="option-desc">Scramble scopes into minified identifiers</span>
+                  </span>
+                  <span class="toggle">
+                    <input type="checkbox" id="opt-rename" checked>
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  </span>
+                </label>
+
+                <label class="toggle-wrapper">
+                  <span class="option-text">
+                    <span class="option-title">Protect Roblox Globals</span>
+                    <span class="option-desc">Never rename game APIs or engine indices</span>
+                  </span>
+                  <span class="toggle">
+                    <input type="checkbox" id="opt-preserve" checked>
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  </span>
+                </label>
+
+                <label class="toggle-wrapper">
+                  <span class="option-text">
+                    <span class="option-title">XOR Encrypt Strings</span>
+                    <span class="option-desc">Convert plaintext strings into byte arrays</span>
+                  </span>
+                  <span class="toggle">
+                    <input type="checkbox" id="opt-encode" checked>
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  </span>
+                </label>
+
+                <label class="toggle-wrapper">
+                  <span class="option-text">
+                    <span class="option-title">Control Flow Scrambling</span>
+                    <span class="option-desc">Inject opaque predicates &amp; junk branches</span>
+                  </span>
+                  <span class="toggle">
+                    <input type="checkbox" id="opt-scramble" checked>
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  </span>
+                </label>
+
+                <label class="toggle-wrapper">
+                  <span class="option-text">
+                    <span class="option-title">Minify Code</span>
+                    <span class="option-desc">Strip comments, whitespace and newlines</span>
+                  </span>
+                  <span class="toggle">
+                    <input type="checkbox" id="opt-oneline">
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  </span>
+                </label>
+              </fieldset>
+
+              <fieldset class="web-fieldset">
+                <legend class="web-legend">Virtualization</legend>
+
+                <div class="select-group">
+                  <span class="select-label">VM Architecture</span>
+                  <select id="opt-vm-type" hidden>
+                    <option value="none">None</option>
+                    <option value="register" selected>Register-Based VM</option>
+                    <option value="stack">Stack-Based VM</option>
+                  </select>
+                  <div class="zdrop" id="zdrop-vm-type" data-target="opt-vm-type">
+                    <button type="button" class="zdrop-trigger">
+                      <span class="zdrop-trigger-text">Register-Based VM</span>
+                      <svg class="zdrop-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="zdrop-menu">
+                      <button type="button" class="zdrop-option" data-value="none">
+                        <span class="zdrop-option-text"><span class="zdrop-option-main">None</span><span class="zdrop-option-sub">Standard AST obfuscation</span></span>
+                        <svg class="zdrop-option-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                      <button type="button" class="zdrop-option is-active" data-value="register">
+                        <span class="zdrop-option-text"><span class="zdrop-option-main">Register-Based VM</span><span class="zdrop-option-sub">Polymorphic engine</span></span>
+                        <svg class="zdrop-option-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                      <button type="button" class="zdrop-option" data-value="stack">
+                        <span class="zdrop-option-text"><span class="zdrop-option-main">Stack-Based VM</span><span class="zdrop-option-sub">Classic architecture</span></span>
+                        <svg class="zdrop-option-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="select-group">
+                  <span class="select-label">Hardening Grade</span>
+                  <select id="opt-vm-level" hidden>
+                    <option value="max" selected>Max</option>
+                    <option value="normal">Normal</option>
+                    <option value="debug">Debug</option>
+                  </select>
+                  <div class="zdrop" id="zdrop-vm-level" data-target="opt-vm-level">
+                    <button type="button" class="zdrop-trigger">
+                      <span class="zdrop-trigger-text">Max</span>
+                      <svg class="zdrop-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="zdrop-menu">
+                      <button type="button" class="zdrop-option is-active" data-value="max">
+                        <span class="zdrop-option-text"><span class="zdrop-option-main">Max</span><span class="zdrop-option-sub">LZSS, Anti-Dump, S-Box Cipher</span></span>
+                        <svg class="zdrop-option-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                      <button type="button" class="zdrop-option" data-value="normal">
+                        <span class="zdrop-option-text"><span class="zdrop-option-main">Normal</span><span class="zdrop-option-sub">XOR table, instruction shuffling</span></span>
+                        <svg class="zdrop-option-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                      <button type="button" class="zdrop-option" data-value="debug">
+                        <span class="zdrop-option-text"><span class="zdrop-option-main">Debug</span><span class="zdrop-option-sub">Readable VM for stack tracing</span></span>
+                        <svg class="zdrop-option-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="button-footer">
+              <button id="btn-obfuscate" class="btn btn-solid">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="btn-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span class="btn-text">Obfuscate Script</span>
+                <div class="btn-loader hidden"></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Output -->
+          <div class="web-panel">
+            <div class="panel-header">
+              <div class="window-dots"><span></span><span></span><span></span></div>
+              <span class="panel-title">Output · Protected Source</span>
+            </div>
+            <div class="panel-body">
+              <div class="code-editor">
+                <div class="line-numbers" id="output-lines"><span>1</span></div>
+                <textarea id="output-editor" class="code-textarea" readonly placeholder="-- Obfuscated output will appear here..."></textarea>
+              </div>
+            </div>
+            <div class="button-footer button-footer-split">
+              <button id="btn-copy" class="btn btn-outline" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span id="copy-text">Copy</span>
+              </button>
+              <button id="btn-download" class="btn btn-outline" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                <span>Download</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Console -->
+        <div class="web-console">
+          <div class="console-header">
+            <div class="console-title-wrap">
+              <span class="console-indicator status-idle" id="indicator"></span>
+              <span class="console-header-title">Compiler Terminal</span>
+            </div>
+            <span id="status-title">Ready</span>
+          </div>
+          <div class="console-body" id="terminal-console">
+            <div class="console-line line-system">[SYSTEM] ZEOX Obfuscator Web-Engine initialized. Ready for script analysis.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: API KEY (LOCKED) ═══════════════ -->
+      <section class="tab-content" id="tab-apikey">
+        <div class="locked-page">
+          <div class="locked-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h2 class="locked-title">API Key Access</h2>
+          <p class="locked-desc">API key management requires a <strong>Pro</strong> subscription. Upgrade to unlock programmatic access, webhooks, and rate limits.</p>
+          <div class="locked-features">
+            <div class="locked-feat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Unlimited API calls
+            </div>
+            <div class="locked-feat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Webhook support
+            </div>
+            <div class="locked-feat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Priority processing
+            </div>
+            <div class="locked-feat">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Custom rate limits
+            </div>
+          </div>
+          <button class="btn-upgrade">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Upgrade to Pro
+          </button>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: FILES ═══════════════ -->
+      <section class="tab-content" id="tab-files">
+        <div class="files-header">
+          <div>
+            <h2 class="files-title">File Management</h2>
+            <p class="files-sub">Encrypt or publish files for direct raw access · Max 500 KB</p>
+          </div>
+          <label class="btn-upload-file">
+            <input type="file" id="file-encrypt-input" hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0-12 4 4m-4-4-4 4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            Upload File
+          </label>
+        </div>
+
+        <div class="quota-banner">
+          <div class="quota-banner-left">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span>Daily quota: <b id="quota-used-text">0 KB</b> used of <b>500 KB</b></span>
+          </div>
+          <div class="quota-banner-bar">
+            <div class="quota-banner-fill" id="quota-banner-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="files-drop-zone" id="files-drop-zone">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6m0 0-3-3m3 3 3-3"/></svg>
+          <p class="drop-title">Drop any file here to encrypt or publish</p>
+          <p class="drop-sub">Max file size 500 KB · Supported: any format · Resets every 24h</p>
+        </div>
+
+        <div class="files-list" id="files-list">
+          <!-- encrypted files appear here -->
+          <div class="empty-state" id="files-empty">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <p>No encrypted files yet.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: DOCS ═══════════════ -->
+      <section class="tab-content" id="tab-docs">
+        <div class="docs-wrap">
+          <h2 class="docs-h1">ZEOX Documentation</h2>
+          <p class="docs-lead">Learn how to use every feature of the ZEOX obfuscation engine.</p>
+
+          <div class="docs-section">
+            <h3 class="docs-h2">Getting Started</h3>
+            <p class="docs-p">Paste your Luau script into the <b>Input</b> panel, configure the options in <b>Config</b>, then hit <b>Obfuscate Script</b>. The output will appear in the right panel and can be copied or downloaded.</p>
+          </div>
+
+          <div class="docs-section">
+            <h3 class="docs-h2">Protection Options</h3>
+            <div class="docs-table">
+              <div class="docs-row docs-row-head">
+                <span>Option</span><span>Effect</span>
+              </div>
+              <div class="docs-row">
+                <span><b>Rename Variables</b></span>
+                <span>Replaces all local identifiers with short, random names.</span>
+              </div>
+              <div class="docs-row">
+                <span><b>Protect Globals</b></span>
+                <span>Excludes Roblox-specific APIs from renaming to prevent runtime errors.</span>
+              </div>
+              <div class="docs-row">
+                <span><b>XOR Encrypt Strings</b></span>
+                <span>Encodes every string literal as an XOR byte array loaded at runtime.</span>
+              </div>
+              <div class="docs-row">
+                <span><b>Control Flow</b></span>
+                <span>Injects opaque predicates and dead branches to confuse decompilers.</span>
+              </div>
+              <div class="docs-row">
+                <span><b>Minify Code</b></span>
+                <span>Removes all comments, whitespace, and newlines for a compact output.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <h3 class="docs-h2">VM Architecture</h3>
+            <div class="docs-table">
+              <div class="docs-row docs-row-head"><span>Mode</span><span>Description</span></div>
+              <div class="docs-row"><span><b>None</b></span><span>Standard AST-level obfuscation, no VM wrapper.</span></div>
+              <div class="docs-row"><span><b>Register VM</b></span><span>Compiles to a custom polymorphic register-based virtual machine.</span></div>
+              <div class="docs-row"><span><b>Stack VM</b></span><span>Classic stack-based VM, more compatible but slightly less obfuscated.</span></div>
+            </div>
+          </div>
+
+          <div class="docs-section">
+            <h3 class="docs-h2">File Encryption</h3>
+            <p class="docs-p">Any user can encrypt files up to <b>500 KB per day</b>. You receive a free <b>100 KB daily gift</b> that resets every 24 hours. Encrypted files are available for download immediately after processing.</p>
+          </div>
+
+          <div class="docs-section">
+            <h3 class="docs-h2">API Access <span class="docs-badge-pro">Pro</span></h3>
+            <p class="docs-p">Pro subscribers can generate API keys to access the obfuscation engine programmatically. See the <b>API Key</b> tab to upgrade.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Tab routing ──
+    const navItems   = document.querySelectorAll('.nav-item');
+    const tabPanels  = document.querySelectorAll('.tab-content');
+    const topbarTitle = document.getElementById('topbar-title');
+    const breadcrumbMap = { home:'/ Dashboard', obfuscator:'/ Obfuscator', apikey:'/ API Key', files:'/ Files', docs:'/ Docs' };
+
+    function switchTab(tabId) {
+      if (document.querySelector(`.nav-item[data-tab="${tabId}"]`)?.classList.contains('nav-locked')) return;
+      navItems.forEach(n => n.classList.toggle('active', n.dataset.tab === tabId));
+      tabPanels.forEach(p => p.classList.toggle('active', p.id === 'tab-' + tabId));
+      const labels = { home:'Home', obfuscator:'Obfuscator', apikey:'API Key', files:'Files', docs:'Docs' };
+      if (topbarTitle) topbarTitle.textContent = labels[tabId] || tabId;
+      const bc = document.querySelector('.topbar-breadcrumb');
+      if (bc) bc.textContent = breadcrumbMap[tabId] || '';
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => switchTab(item.dataset.tab));
+    });
+    document.querySelectorAll('[data-tab-trigger]').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tabTrigger));
+    });
+
+    // ── File encryption (client-side XOR demo) ──
+    const DAILY_MAX = 500 * 1024;
+    let usedBytes = 0;
+    let obfuscationCount = 0;
+
+    function updateQuota() {
+      const pct = Math.min((usedBytes / DAILY_MAX) * 100, 100).toFixed(1);
+      const usedKb = (usedBytes / 1024).toFixed(1);
+      document.querySelectorAll('#quota-fill').forEach(el => el.style.width = pct + '%');
+      const bf = document.getElementById('quota-banner-fill');
+      if (bf) bf.style.width = pct + '%';
+      const qt = document.getElementById('quota-used-text');
+      if (qt) qt.textContent = usedKb + ' KB';
+      
+      // Update Home tab stats if elements exist
+      const homeObfCount = document.getElementById('home-obf-count');
+      if (homeObfCount) homeObfCount.textContent = obfuscationCount;
+    }
+
+    // Function to deduct quota (called from app.js when Obfuscate button is clicked)
+    window.deductQuota = function(amount) {
+        // Define cost per script obfuscation (e.g., 5 KB)
+        const costPerObf = 5 * 1024; 
+        
+        // 1. Update total used bytes (for the Quota Bar)
+        usedBytes += costPerObf;
+        
+        // 2. Update Obfuscation counter
+        obfuscationCount += 1;
+        
+        // 3. Refresh all UI elements
+        updateQuota();
+        
+        // Update sidebar quota text if it exists (the one that says "Used: 0 KB")
+        const sidebarQuotaText = document.querySelector('.quota-label b');
+        if (sidebarQuotaText) {
+            sidebarQuotaText.textContent = (usedBytes / 1024).toFixed(1) + ' KB';
+        }
+    };
+
+    function xorEncryptBytes(bytes) {
+      const key = 0x5A; // 'Z'
+      return bytes.map(b => b ^ key);
+    }
+
+    function handleFileEncrypt(file) {
+      if (!file) return;
+      if (file.size > 500 * 1024) {
+        alert('File exceeds 500 KB limit.');
+        return;
+      }
+      if (usedBytes + file.size > DAILY_MAX) {
+        alert('Daily quota exceeded (500 KB). Resets in 24 hours.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        const bytes = new Uint8Array(e.target.result);
+        const enc   = new Uint8Array(xorEncryptBytes(Array.from(bytes)));
+        usedBytes  += file.size;
+        updateQuota();
+
+        // Add to list
+        const empty = document.getElementById('files-empty');
+        if (empty) empty.style.display = 'none';
+
+        const row = document.createElement('div');
+        row.className = 'file-row';
+        // Create a simulated raw link
+        const fileId = Math.random().toString(36).substring(2, 10);
+        // Use relative path for compatibility
+        const rawLink = window.location.origin + `/raw/${fileId}`;
+
+        row.innerHTML = `
+          <div class="file-row-info">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="file-name">${file.name}</span>
+            <span class="file-size">${(file.size/1024).toFixed(1)} KB</span>
+            <span class="file-badge sky">Ready</span>
+          </div>
+          <div class="file-actions">
+            <button class="file-raw-btn" title="Copy Raw Link">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Raw Link
+            </button>
+            <button class="file-dl-btn" title="Download encrypted">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              Download
+            </button>
+          </div>`;
+
+        row.querySelector('.file-dl-btn').addEventListener('click', () => {
+          const blob = new Blob([enc], { type: 'application/octet-stream' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = file.name + '.zeox.enc';
+          a.click(); a.remove();
+        });
+
+        row.querySelector('.file-raw-btn').addEventListener('click', (e) => {
+          navigator.clipboard.writeText(rawLink).then(() => {
+            const btn = e.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+            setTimeout(() => btn.innerHTML = originalHTML, 2000);
+          });
+        });
+
+        document.getElementById('files-list').prepend(row);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    document.getElementById('file-encrypt-input')?.addEventListener('change', e => {
+      handleFileEncrypt(e.target.files[0]);
+      e.target.value = '';
+    });
+
+    const dz = document.getElementById('files-drop-zone');
+    dz?.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz?.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz?.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('drag-over');
+      handleFileEncrypt(e.dataTransfer.files[0]);
+    });
+  </script>
+
+</body>
+</html>
