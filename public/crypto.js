@@ -1,119 +1,77 @@
 /**
- * ZEOX · AES-256-GCM encryption (Browser / Web Crypto API)
+ * ZEOX · AES-256-GCM encryption  (Browser / Web Crypto API)
  *
- * Format stored in Firestore:
+ * Stored format in Firestore:
  *   base64( IV[12] || ciphertext+authTag )
  *
- * Compatible with src/crypto/encrypt.ts (Node.js) which uses
- * the same binary layout (Web Crypto appends authTag automatically).
+ * Compatible with src/crypto/encrypt.ts (Node.js).
+ * Web Crypto automatically appends the 16-byte auth tag to the ciphertext.
  *
  * Usage (ES module):
  *   import { encryptToBase64, decryptFromBase64 } from "./crypto.js";
  */
 
-// Must match the value in src/crypto/encrypt.ts
-const PASSPHRASE  = "zeox-aes-v1-secure-key-2024";
+const PASSPHRASE  = "zeox-aes-v1-secure-key-2024"; // must match src/crypto/encrypt.ts
 const PBKDF2_SALT = new TextEncoder().encode("zeox-salt-v1");
 const PBKDF2_ITER = 100_000;
-const IV_LEN      = 12; // bytes
+const IV_LEN      = 12; // bytes (96-bit recommended for GCM)
 
-let _cryptoKey = null;
+let _key = null;
 
 async function getCryptoKey() {
-  if (_cryptoKey) return _cryptoKey;
-
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(PASSPHRASE),
-    "PBKDF2",
-    false,
-    ["deriveKey"]
+  if (_key) return _key;
+  const mat = await crypto.subtle.importKey(
+    "raw", new TextEncoder().encode(PASSPHRASE),
+    "PBKDF2", false, ["deriveKey"]
   );
-
-  _cryptoKey = await crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      salt: PBKDF2_SALT,
-      iterations: PBKDF2_ITER,
-      hash: "SHA-256",
-    },
-    keyMaterial,
+  _key = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: PBKDF2_SALT, iterations: PBKDF2_ITER, hash: "SHA-256" },
+    mat,
     { name: "AES-GCM", length: 256 },
     false,
     ["encrypt", "decrypt"]
   );
+  return _key;
+}
 
-  return _cryptoKey;
+/** Uint8Array → base64 */
+export function bytesToBase64(bytes) {
+  let s = "";
+  bytes.forEach(b => s += String.fromCharCode(b));
+  return btoa(s);
+}
+
+/** base64 → Uint8Array */
+export function base64ToBytes(b64) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
 }
 
 /**
- * Encrypt raw bytes (ArrayBuffer or Uint8Array) with AES-256-GCM.
+ * Encrypt raw bytes (ArrayBuffer / Uint8Array) with AES-256-GCM.
  * Returns base64 string: IV[12] || ciphertext+authTag
  */
-export async function encryptBytes(data) {
+export async function encryptToBase64(data) {
   const key = await getCryptoKey();
   const iv  = crypto.getRandomValues(new Uint8Array(IV_LEN));
-
-  // Web Crypto appends the 16-byte auth tag to the ciphertext automatically
-  const ciphertextBuf = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
-    key,
-    data
-  );
-
-  const result = new Uint8Array(IV_LEN + ciphertextBuf.byteLength);
-  result.set(iv, 0);
-  result.set(new Uint8Array(ciphertextBuf), IV_LEN);
-  return result;
+  const ct  = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, data);
+  const out = new Uint8Array(IV_LEN + ct.byteLength);
+  out.set(iv, 0);
+  out.set(new Uint8Array(ct), IV_LEN);
+  return bytesToBase64(out);
 }
 
 /**
- * Decrypt bytes previously encrypted with encryptBytes / encryptToBase64.
- * Returns a Uint8Array of the original plaintext.
- */
-export async function decryptBytes(encryptedBytes) {
-  const key        = await getCryptoKey();
-  const iv         = encryptedBytes.slice(0, IV_LEN);
-  const ciphertext = encryptedBytes.slice(IV_LEN); // includes auth tag at end
-
-  const plainBuf = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv },
-    key,
-    ciphertext
-  );
-
-  return new Uint8Array(plainBuf);
-}
-
-/** Helper: Uint8Array → base64 string */
-export function bytesToBase64(bytes) {
-  let binary = "";
-  bytes.forEach((b) => (binary += String.fromCharCode(b)));
-  return btoa(binary);
-}
-
-/** Helper: base64 string → Uint8Array */
-export function base64ToBytes(b64) {
-  const binary = atob(b64);
-  const bytes  = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return bytes;
-}
-
-/**
- * Encrypt raw bytes (ArrayBuffer / Uint8Array) → base64 string.
- * This is what dashboard.html calls when uploading a file.
- */
-export async function encryptToBase64(data) {
-  const encrypted = await encryptBytes(data);
-  return bytesToBase64(encrypted);
-}
-
-/**
- * Decrypt a base64 string produced by encryptToBase64 / src/crypto/encrypt.ts.
- * Returns a Uint8Array of the original plaintext.
+ * Decrypt a base64 string produced by encryptToBase64.
+ * Returns Uint8Array of original plaintext.
  */
 export async function decryptFromBase64(b64) {
-  const encBytes = base64ToBytes(b64);
-  return await decryptBytes(encBytes);
+  const key   = await getCryptoKey();
+  const bytes = base64ToBytes(b64);
+  const iv    = bytes.slice(0, IV_LEN);
+  const ct    = bytes.slice(IV_LEN); // includes auth tag at end
+  const pt    = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
+  return new Uint8Array(pt);
 }
