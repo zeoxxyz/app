@@ -1,0 +1,9 @@
+{
+  "outputDirectory": "public",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/raw/:fileId",  "destination": "/raw.html" },
+    { "source": "/raw/:fileId/", "destination": "/raw.html" }
+  ]
+}
