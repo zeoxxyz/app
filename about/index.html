@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — ZEOX</title>
+  <meta name="description" content="Who we are and why we built ZEOX — a modern obfuscation engine for Roblox and Luau developers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/site.css?v=2">
+</head>
+<body class="site">
+  <nav class="site-nav">
+    <a class="site-nav-brand" href="/home/"><span class="site-nav-brand-mark">Z</span>ZEOX</a>
+    <div class="site-nav-links">
+      <a href="/home/">Home</a>
+      <a href="/about/">About</a>
+      <a href="/dashboard/">Dashboard</a>
+      <a class="primary" href="/login/">Sign in</a>
+    </div>
+  </nav>
+
+  <main class="site-main">
+    <section class="hero">
+      <span class="hero-eyebrow"><span class="dot"></span> About us</span>
+      <h1 class="hero-title">Tools built for <span class="grad">serious Luau devs</span></h1>
+      <p class="hero-desc">ZEOX started as an internal tool for a small group of Roblox scripters who were tired of watching cheap obfuscators get reversed in seconds. Today it's a full VM-based protection engine trusted by hundreds of developers.</p>
+    </section>
+
+    <section class="section" style="margin-top:60px;">
+      <span class="section-eyebrow">Our approach</span>
+      <h2 class="section-title">Strong. Transparent. Fast.</h2>
+      <p class="section-lede">Protection shouldn't be a black box, and it shouldn't slow you down.</p>
+      <div class="about-grid">
+        <div class="about-card glass">
+          <span class="about-num">01</span>
+          <h3>Register-based VM</h3>
+          <p>ZEOX rewrites your script into bytecode that runs on a virtual machine bundled with it. The original source never ships — reversers see VM state, not logic.</p>
+        </div>
+        <div class="about-card glass">
+          <span class="about-num">02</span>
+          <h3>Zero trust</h3>
+          <p>Every string, table and control-flow branch is transformed. Even if attackers dump memory mid-run, they only see opaque instructions.</p>
+        </div>
+        <div class="about-card glass">
+          <span class="about-num">03</span>
+          <h3>Developer-first UX</h3>
+          <p>Clean dashboard, real usage stats, keyboard shortcuts and instant feedback. Protection shouldn't get in the way of shipping.</p>
+        </div>
+        <div class="about-card glass">
+          <span class="about-num">04</span>
+          <h3>Fair pricing</h3>
+          <p>Free daily quota for everyone, honest Pro tiers for power users. No hidden limits, no surprise charges.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-banner">
+      <h2>Join the ZEOX community</h2>
+      <p>Free tier, no credit card. Ship your first protected script today.</p>
+      <a class="btn-hero" href="/login/">Create free account
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+      </a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">ZEOX — Luau Obfuscation Engine</div>
+    © 2026 ZEOX. All rights reserved.
+  </footer>
+</body>
+</html>
